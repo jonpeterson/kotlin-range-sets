@@ -5,6 +5,11 @@ import java.util.*
 /**
  * Base class for implementing a [MutableSet] of [ClosedRange]s.
  *
+ * Ranges in the set will always be in a normalized state. This means that ranges are kept in order and overlapping or
+ * adjacent ranges will be joined.
+ *
+ * Some operations on this are not designed to be thread-safe.
+ *
  * @param T the type of ranges in this set
  */
 abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneable {
@@ -16,29 +21,42 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
     constructor()
 
     /**
-     * Creates a set with ranges added
+     * Creates a set with ranges added.
+     *
+     * @property ranges ranges to normalize and add
      */
     constructor(ranges: List<ClosedRange<T>>) {
         addAll(ranges)
     }
 
     /**
-     * Copy constructor.
+     * Creates a set with ranges shallow-copied from another [RangeSet].
      *
-     * @param rangeSet copy from other range set
+     * @property rangeSet set to copy ranges from
      */
     protected constructor(rangeSet: RangeSet<T>) {
         ranges.addAll(rangeSet)
     }
 
-    // TODO: document and test
+    /**
+     * @return number of ranges
+     */
+    // TODO: test
     override val size: Int
         get() = ranges.size
 
-    // TODO: document and test
-    fun contains(rangeElement: T): Boolean = ranges.any { it.contains(rangeElement) }
+    /**
+     * @param rangeValue value to determine presence of
+     * @return whether a value is contained by any of the ranges in the set
+     */
+    // TODO: test
+    fun contains(rangeValue: T): Boolean = ranges.any { it.contains(rangeValue) }
 
-    // TODO: document and test
+    /**
+     * @param element range to determine presence of
+     * @return whether a range is contained within any of the ranges in the set
+     */
+    // TODO: test
     override fun contains(element: ClosedRange<T>): Boolean {
         ranges.forEach { range ->
             if(element.start.compareTo(range.start) >= 0 && element.endInclusive.compareTo(range.endInclusive) <= 0)
@@ -48,13 +66,27 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
         return false
     }
 
-    // TODO: document and test
+    /**
+     * @param elements ranges to determine presence of
+     * @return whether ranges are all contained within any of the ranges in the set
+     */
+    // TODO: test
     override fun containsAll(elements: Collection<ClosedRange<T>>): Boolean = elements.all { contains(it) }
 
-    // TODO: document
+    /**
+     * @return whether the set contains any elements
+     */
     override fun isEmpty(): Boolean = ranges.isEmpty()
 
-    // TODO: document
+    /**
+     * Adds a range to the set.
+     *
+     * The set is normalized (see class-level documentation for the definition of normalization
+     * used here) during insertion.
+     *
+     * @param element range to add
+     * @return whether any values were added; false if every value of the new range were already in a range in the set
+     */
     override fun add(element: ClosedRange<T>): Boolean {
         var new = element
         var addIndex = -1
@@ -125,7 +157,15 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
         return true
     }
 
-    // TODO: document
+    /**
+     * Adds multiple ranges to the set.
+     *
+     * The set is normalized (see class-level documentation for the definition of normalization
+     * used here) during insertion.
+     *
+     * @param elements ranges to add
+     * @return whether any values were added; false if every value of every new range were already in a range in the set
+     */
     override fun addAll(elements: Collection<ClosedRange<T>>): Boolean {
         return elements.map { add(it) }.any()
     }
