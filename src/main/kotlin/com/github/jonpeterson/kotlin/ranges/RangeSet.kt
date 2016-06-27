@@ -8,7 +8,8 @@ import java.util.*
  * Ranges in the set will always be in a normalized state. This means that ranges are kept in order and overlapping or
  * adjacent ranges will be joined.
  *
- * Some operations on this are not designed to be thread-safe.
+ * Some operations are not designed to be thread-safe. Wrap this in [Collections.synchronizedSet] if thread-safety is
+ * needed.
  *
  * @param T the type of ranges in this set
  */
@@ -41,51 +42,74 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
     /**
      * @return number of ranges
      */
-    // TODO: test
     override val size: Int
         get() = ranges.size
 
     /**
-     * @param rangeValue value to determine presence of
-     * @return whether a value is contained by any of the ranges in the set
+     * Checks if the specified value is present in the set.
+     *
+     * Examples:
+     * ```
+     * assert(IntRangeSet(listOf(5..8, 11..16)).contains(6) == true)
+     * assert(IntRangeSet(listOf(5..8, 11..16)).contains(9) == false)
+     * ```
+     *
+     * @param value value to determine presence of
+     * @return whether the value is contained within the set
      */
-    // TODO: test
-    fun contains(rangeValue: T): Boolean = ranges.any { it.contains(rangeValue) }
+    fun containsValue(value: T): Boolean = ranges.any { it.contains(value) }
 
     /**
-     * @param element range to determine presence of
-     * @return whether a range is contained within any of the ranges in the set
+     * Checks if all values in the specified range are present in the set.
+     *
+     * Examples:
+     * ```
+     * assert(IntRangeSet(listOf(5..8, 11..16)).contains(6..7) == true)
+     * assert(IntRangeSet(listOf(5..8, 11..16)).contains(6..12) == false)
+     * ```
+     *
+     * @param element range of values to determine presence of
+     * @return whether all values are all contained within the set
      */
-    // TODO: test
     override fun contains(element: ClosedRange<T>): Boolean {
-        ranges.forEach { range ->
+        for(range in ranges)
             if(element.start.compareTo(range.start) >= 0 && element.endInclusive.compareTo(range.endInclusive) <= 0)
                 return true
-        }
 
         return false
     }
 
     /**
-     * @param elements ranges to determine presence of
-     * @return whether ranges are all contained within any of the ranges in the set
+     * Checks if all values in the specified ranges are present in the set.
+     *
+     * Examples:
+     * ```
+     * assert(IntRangeSet(listOf(5..8, 11..16)).containsAll(listOf(6..7, 14..15)) == true)
+     * assert(IntRangeSet(listOf(5..8, 11..16)).containsAll(listOf(6..12, 14..15)) == false)
+     * ```
+     *
+     * @param elements ranges of values to determine presence of
+     * @return whether all values are all contained within the set
      */
-    // TODO: test
     override fun containsAll(elements: Collection<ClosedRange<T>>): Boolean = elements.all { contains(it) }
 
     /**
-     * @return whether the set contains any elements
+     * @return whether the set contains any values
      */
     override fun isEmpty(): Boolean = ranges.isEmpty()
 
     /**
-     * Adds a range to the set.
+     * Adds range of values to the set; addition set logic.
      *
-     * The set is normalized (see class-level documentation for the definition of normalization
-     * used here) during insertion.
+     * Examples:
+     * ```
+     * assert(IntRangeSet(listOf(7..11)).apply { add(3..5) }.toList() == listOf(3..5, 7..11))
+     * assert(IntRangeSet(listOf(5..11)).apply { add(7..10) }.toList() == listOf(5..11))
+     * assert(IntRangeSet(listOf(5..8, 11..16)).apply { add(7..10) }.toList() == listOf(5..16))
+     * ```
      *
-     * @param element range to add
-     * @return whether any values were added; false if every value of the new range were already in a range in the set
+     * @param element range of values to add
+     * @return whether any values were added
      */
     override fun add(element: ClosedRange<T>): Boolean {
         var new = element
@@ -158,24 +182,42 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
     }
 
     /**
-     * Adds multiple ranges to the set.
+     * Adds ranges of values to the set; addition set logic.
      *
-     * The set is normalized (see class-level documentation for the definition of normalization
-     * used here) during insertion.
+     * Examples:
+     * ```
+     * assert(IntRangeSet(listOf(5..21)).apply { addAll(listOf(7..10, 12..15)) }.toList() == listOf(5..21))
+     * assert(IntRangeSet(listOf(5..8, 11..16)).apply { addAll(listOf(7..10, 14..20)) }.toList() == listOf(5..20))
+     * assert(IntRangeSet(listOf(11..16)).apply { addAll(listOf(7..10, 18..21)) }.toList() == listOf(7..16, 18..21))
+     * ```
      *
-     * @param elements ranges to add
-     * @return whether any values were added; false if every value of every new range were already in a range in the set
+     * @param elements ranges of values to add
+     * @return whether any values were added
      */
     override fun addAll(elements: Collection<ClosedRange<T>>): Boolean {
         return elements.map { add(it) }.any()
     }
 
-    // TODO: document
+    /**
+     * Removes all values from the set.
+     */
     override fun clear() {
         ranges.clear()
     }
 
-    // TODO: document
+    /**
+     * Removes a range of values from the set; subtraction set logic.
+     *
+     * Examples:
+     * ```
+     * assert(IntRangeSet(listOf(5..21)).apply { remove(7..15) }.toList() == listOf(5..6, 16..21))
+     * assert(IntRangeSet(listOf(5..9, 13..21)).apply { remove(7..15) }.toList() == listOf(5..6, 16..21))
+     * assert(IntRangeSet(listOf(5..9, 13..21)).apply { remove(3..28) }.isEmpty())
+     * ```
+     *
+     * @param element range of values to remove
+     * @return whether any values were removed
+     */
     override fun remove(element: ClosedRange<T>): Boolean {
         var changed = false
 
@@ -232,12 +274,35 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
         return changed
     }
 
-    // TODO: document, test
+    /**
+     * Removes ranges of values from the set; subtraction set logic.
+     *
+     * Examples:
+     * ```
+     * assert(IntRangeSet(listOf(5..21)).apply { removeAll(listOf(7..15, 12..17, 20..20)) }.toList() == listOf(5..6, 18..19, 21..21))
+     * assert(IntRangeSet(listOf(5..9, 13..21)).apply { removeAll(listOf(7..15, 19..23)) }.toList() == listOf(5..6, 16..18))
+     * ```
+     *
+     * @param elements ranges of values to remove
+     * @return whether any values were removed
+     */
     override fun removeAll(elements: Collection<ClosedRange<T>>): Boolean {
-        return elements.map { remove(it) }.any()
+        return elements.map { remove(it) }.any { it }
     }
 
-    // TODO: document
+    /**
+     * Removes all values from set except those contained in the specified range; intersection set logic.
+     *
+     * Examples:
+     * ```
+     * assert(IntRangeSet(listOf(5..21)).apply { retain(7..15) }.toList() == listOf(7..15))
+     * assert(IntRangeSet(listOf(5..9, 13..21)).apply { retain(7..15) }.toList() == listOf(7..9, 13..15))
+     * assert(IntRangeSet(listOf(5..9, 13..21)).apply { retain(2..25) }.toList() == listOf(5..9, 13..21))
+     * ```
+     *
+     * @param element range of values to keep
+     * @return whether any values were removed
+     */
     fun retain(element: ClosedRange<T>): Boolean {
         var changed = false
 
@@ -299,8 +364,21 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
         return changed
     }
 
-    // TODO: document
+    /**
+     * Removes all values from set except those contained in the specified ranges; intersection set logic.
+     *
+     * Examples:
+     * ```
+     * assert(IntRangeSet(listOf(5..21)).apply { retainAll(listOf(7..10, 12..15)) }.toList() == listOf(7..10, 12..15))
+     * assert(IntRangeSet(listOf(5..9, 13..21)).apply { retainAll(listOf(7..15, 18..25)) }.toList() == listOf(7..9, 13..15, 18..21))
+     * ```
+     *
+     * @param elements ranges of values to keep
+     * @return whether any values were removed
+     */
     override fun retainAll(elements: Collection<ClosedRange<T>>): Boolean {
+        // TODO: determine if this entire can be more efficiently designed
+
         val unnormalizedRanges = elements.map { element ->
             val clone = clone()
             clone.retain(element)
@@ -315,7 +393,19 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
         return shallowRangesCopy != ranges
     }
 
-    // TODO: document
+    // TODO: implement, document, test
+    /*fun difference(element: ClosedRange<T>): RangeSet<T> {
+    }*/
+
+    // TODO: implement, document, test
+    /*fun differenceAll(elements: ClosedRange<T>): RangeSet<T> {
+    }*/
+
+    // TODO: implement, document, test
+    /*fun gaps(): RangeSet<T> {
+        // difference(first.start..last.end)
+    }*/
+
     override fun iterator(): MutableIterator<ClosedRange<T>> = ranges.iterator()
 
     override fun hashCode(): Int {
@@ -326,15 +416,11 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
         return this === other || (other is RangeSet<*> && ranges == other.ranges)
     }
 
-    // TODO: document
     protected abstract fun createRange(start: T, endInclusive: T): ClosedRange<T>
 
-    // TODO: document
     protected abstract fun incrementValue(value: T): T
 
-    // TODO: document
     protected abstract fun decrementValue(value: T): T
 
-    // TODO: document
     override abstract fun clone(): RangeSet<T>
 }
