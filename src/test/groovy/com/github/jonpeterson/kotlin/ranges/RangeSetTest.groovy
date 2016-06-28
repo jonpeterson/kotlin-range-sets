@@ -147,7 +147,36 @@ class RangeSetTest extends Specification {
         [4..15, 13..26, 22..26] | true    | [4..7, 12..16, 22..26]
     }
 
-    @Unroll
+    def 'differenceAll: #set'() {
+        expect:
+        new IntRangeSet(groovyToKotlinRanges(set)).differenceAll(groovyToKotlinRanges(difference)).toList() == groovyToKotlinRanges(expected)
+
+        where:
+        set                             | difference       | expected
+        []                              | []               | []
+        []                              | [1..2]           | [1..2]
+        []                              | [1..2, 5..7]     | [1..2, 5..7]
+        [3..7]                          | []               | []
+        [3..7]                          | [4..6]           | []
+        [3..7]                          | [3..7]           | []
+        [3..7]                          | [2..8]           | [2..2, 8..8]
+        [3..7]                          | [1..4, 6..10]    | [1..2, 8..10]
+        [3..7, 12..16, 22..27, 29..32]  | []               | []
+        [3..7, 12..16, 22..27, 29..32]  | [5..14, 26..30]  | [8..11, 28..28]
+        [3..7, 12..16, 22..27, 29..32]  | [1..35]          | [1..2, 8..11, 17..21, 28..28, 33..35]
+    }
+
+    def 'gaps: #set'() {
+        expect:
+        new IntRangeSet(groovyToKotlinRanges(set)).gaps().toList() == groovyToKotlinRanges(expected)
+
+        where:
+        set                             | expected
+        []                              | []
+        [3..7]                          | []
+        [3..7, 12..16, 22..27, 29..32]  | [8..11, 17..21, 28..28]
+    }
+
     def 'hashCode/equals: #ranges'() {
         expect:
         def setA = new IntRangeSet(groovyToKotlinRanges([1..3, 7..10, 15..15]))

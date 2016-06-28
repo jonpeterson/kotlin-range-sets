@@ -393,18 +393,55 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
         return shallowRangesCopy != ranges
     }
 
-    // TODO: implement, document, test
-    /*fun difference(element: ClosedRange<T>): RangeSet<T> {
-    }*/
+    /**
+     * Creates a new [RangeSet] containing values not present in this set within the specified range.
+     *
+     * Examples:
+     * ```
+     * assert(IntRangeSet(listOf(3..7, 12..16, 22..27, 29..32)).difference(5..20).toList() == listOf(8..11, 17..20)
+     * assert(IntRangeSet(listOf(3..7, 12..16, 22..27, 29..32)).difference(1..35).toList() == listOf(1..2, 8..11, 17..21, 28..28, 33..35)
+     * ```
+     *
+     * @return new set containing values not present in this set within the specified range
+     */
+    fun difference(element: ClosedRange<T>): RangeSet<T> {
+        return differenceAll(listOf(element))
+    }
 
-    // TODO: implement, document, test
-    /*fun differenceAll(elements: ClosedRange<T>): RangeSet<T> {
-    }*/
+    /**
+     * Creates a new [RangeSet] containing values not present in this set within the specified ranges.
+     *
+     * Examples:
+     * ```
+     * assert(IntRangeSet(listOf(3..7, 12..16, 22..27, 29..32)).differenceAll(listOf()).isEmpty()
+     * assert(IntRangeSet(listOf(3..7, 12..16, 22..27, 29..32)).differenceAll(listOf(5..14, 26..30)).toList() == listOf(8..11, 28..28)
+     * assert(IntRangeSet(listOf(3..7, 12..16, 22..27, 29..32)).differenceAll(listOf(1..35)).toList() == listOf(1..2, 8..11, 17..21, 28..28, 33..35)
+     * ```
+     *
+     * @return new set containing values not present in this set within the specified range
+     */
+    fun differenceAll(elements: Collection<ClosedRange<T>>): RangeSet<T> {
+        val difference = clone()
+        difference.clear()
+        difference.ranges.addAll(elements)
+        difference.removeAll(ranges)
+        return difference
+    }
 
-    // TODO: implement, document, test
-    /*fun gaps(): RangeSet<T> {
-        // difference(first.start..last.end)
-    }*/
+    /**
+     * Creates a new [RangeSet] containing missing values between the ranges of this set.
+     *
+     * Examples:
+     * ```
+     * assert(IntRangeSet(listOf(5..21)).gaps().isEmpty())
+     * assert(IntRangeSet(listOf(3..7, 12..16, 22..27, 29..32)).gaps() == listOf(8..11, 17..21, 28..28))
+     * ```
+     *
+     * @return new set containing missing values between the ranges of this set
+     */
+    fun gaps(): RangeSet<T> {
+        return if(ranges.isEmpty()) clone().apply { clear() } else difference(ranges.first.endInclusive..ranges.last.start)
+    }
 
     override fun iterator(): MutableIterator<ClosedRange<T>> = ranges.iterator()
 
