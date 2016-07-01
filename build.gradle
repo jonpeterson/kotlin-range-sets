@@ -4,7 +4,7 @@ buildscript {
         dokkaPluginVersion = '0.9.8'
         groovyVersion = '2.4.5'
         gradleVersion = '2.9'
-        kotlinVersion = '1.0.1-2'
+        kotlinVersion = '1.0.2'
         licensePluginVersion = '0.13.1'
         spockVersion = '1.0-groovy-2.4'
 
@@ -43,7 +43,7 @@ apply plugin: 'groovy'
 apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'com.github.hierynomus.license'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.6
 
 repositories {
     mavenCentral()

@@ -1,0 +1,215 @@
+<HTML>
+<HEAD>
+<title>RangeSet - kotlin-range-sets</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">kotlin-range-sets</a>&nbsp;/&nbsp;<a href="../index.html">com.github.jonpeterson.kotlin.ranges</a>&nbsp;/&nbsp;<a href=".">RangeSet</a><br/>
+<br/>
+<h1>RangeSet</h1>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">RangeSet</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Comparable</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">MutableSet</span><span class="symbol">&lt;</span><span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">Cloneable</span></code> <a href="https://github.com/jonpeterson/kotlin-range-sets/blob/master/src/main/kotlin/com/github/jonpeterson/kotlin/ranges/RangeSet.kt#L40">(source)</a><br/>
+<p>Base class for implementing a <a href="#">MutableSet</a> of <a href="#">ClosedRange</a>s.</p>
+<p>Ranges in the set will always be in a normalized state. This means that ranges are kept in order and overlapping or
+adjacent ranges will be joined.</p>
+<p>Some operations are not designed to be thread-safe. Wrap this in <a href="http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#synchronizedSet(java.util.Set<T>)">Collections.synchronizedSet</a> if thread-safety is
+needed.</p>
+<br/>
+<br/>
+<h3>Parameters</h3>
+<a name="T"></a>
+<code>T</code> - the type of ranges in this set<br/>
+<br/>
+<br/>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="-init-.html">&lt;init&gt;</a></td>
+<td>
+<code><span class="identifier">RangeSet</span><span class="symbol">(</span><span class="symbol">)</span></code><p>Creates a set with no ranges.</p>
+<code><span class="identifier">RangeSet</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$<init>(kotlin.collections.List((kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))))/ranges">ranges</span><span class="symbol">:</span>&nbsp;<span class="identifier">List</span><span class="symbol">&lt;</span><span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span></code><code><span class="identifier">RangeSet</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$<init>(com.github.jonpeterson.kotlin.ranges.RangeSet((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))/rangeSet">rangeSet</span><span class="symbol">:</span>&nbsp;<span class="identifier">RangeSet</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">)</span></code><p>Creates a set with ranges shallow-copied from another RangeSet.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="size.html">size</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">size</span><span class="symbol">: </span><span class="identifier">Int</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="add.html">add</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$add(kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))/element">element</span><span class="symbol">:</span>&nbsp;<span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code><p>Adds range of values to the set; addition set logic.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="add-all.html">addAll</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addAll</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$addAll(kotlin.collections.Collection((kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))))/elements">elements</span><span class="symbol">:</span>&nbsp;<span class="identifier">Collection</span><span class="symbol">&lt;</span><span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code><p>Adds ranges of values to the set; addition set logic.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="clear.html">clear</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Unit</span></code><p>Removes all values from the set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="clone.html">clone</a></td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">clone</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">RangeSet</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="contains.html">contains</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">contains</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$contains(kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))/element">element</span><span class="symbol">:</span>&nbsp;<span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code><p>Checks if all values in the specified range are present in the set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="contains-all.html">containsAll</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">containsAll</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$containsAll(kotlin.collections.Collection((kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))))/elements">elements</span><span class="symbol">:</span>&nbsp;<span class="identifier">Collection</span><span class="symbol">&lt;</span><span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code><p>Checks if all values in the specified ranges are present in the set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="contains-value.html">containsValue</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">containsValue</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$containsValue(com.github.jonpeterson.kotlin.ranges.RangeSet.T)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">T</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code><p>Checks if the specified value is present in the set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="create-range.html">createRange</a></td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">createRange</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$createRange(com.github.jonpeterson.kotlin.ranges.RangeSet.T, com.github.jonpeterson.kotlin.ranges.RangeSet.T)/start">start</span><span class="symbol">:</span>&nbsp;<span class="identifier">T</span><span class="symbol">, </span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$createRange(com.github.jonpeterson.kotlin.ranges.RangeSet.T, com.github.jonpeterson.kotlin.ranges.RangeSet.T)/endInclusive">endInclusive</span><span class="symbol">:</span>&nbsp;<span class="identifier">T</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="decrement-value.html">decrementValue</a></td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">decrementValue</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$decrementValue(com.github.jonpeterson.kotlin.ranges.RangeSet.T)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">T</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">T</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="difference.html">difference</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">difference</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$difference(kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))/element">element</span><span class="symbol">:</span>&nbsp;<span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">RangeSet</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code><p>Creates a new RangeSet containing values not present in this set within the specified range.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="difference-all.html">differenceAll</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">differenceAll</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$differenceAll(kotlin.collections.Collection((kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))))/elements">elements</span><span class="symbol">:</span>&nbsp;<span class="identifier">Collection</span><span class="symbol">&lt;</span><span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">RangeSet</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code><p>Creates a new RangeSet containing values not present in this set within the specified ranges.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="equals.html">equals</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">equals</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$equals(kotlin.Any)/other">other</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="gaps.html">gaps</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">gaps</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">RangeSet</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code><p>Creates a new RangeSet containing missing values between the ranges of this set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="hash-code.html">hashCode</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">hashCode</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Int</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="increment-value.html">incrementValue</a></td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">incrementValue</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$incrementValue(com.github.jonpeterson.kotlin.ranges.RangeSet.T)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">T</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">T</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="is-empty.html">isEmpty</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">isEmpty</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="iterator.html">iterator</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">iterator</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">MutableIterator</span><span class="symbol">&lt;</span><span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="remove.html">remove</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">remove</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$remove(kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))/element">element</span><span class="symbol">:</span>&nbsp;<span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code><p>Removes a range of values from the set; subtraction set logic.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="remove-all.html">removeAll</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">removeAll</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$removeAll(kotlin.collections.Collection((kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))))/elements">elements</span><span class="symbol">:</span>&nbsp;<span class="identifier">Collection</span><span class="symbol">&lt;</span><span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code><p>Removes ranges of values from the set; subtraction set logic.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="retain.html">retain</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">retain</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$retain(kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))/element">element</span><span class="symbol">:</span>&nbsp;<span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code><p>Removes all values from set except those contained in the specified range; intersection set logic.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="retain-all.html">retainAll</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">retainAll</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$retainAll(kotlin.collections.Collection((kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))))/elements">elements</span><span class="symbol">:</span>&nbsp;<span class="identifier">Collection</span><span class="symbol">&lt;</span><span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code><p>Removes all values from set except those contained in the specified ranges; intersection set logic.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="../-char-range-set/index.html">CharRangeSet</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">CharRangeSet</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">RangeSet</span><span class="symbol">&lt;</span><span class="identifier">Char</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="../-int-range-set/index.html">IntRangeSet</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">IntRangeSet</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">RangeSet</span><span class="symbol">&lt;</span><span class="identifier">Int</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="../-long-range-set/index.html">LongRangeSet</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">LongRangeSet</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">RangeSet</span><span class="symbol">&lt;</span><span class="identifier">Long</span><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

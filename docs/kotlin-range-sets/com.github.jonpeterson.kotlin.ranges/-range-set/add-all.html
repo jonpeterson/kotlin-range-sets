@@ -1,0 +1,26 @@
+<HTML>
+<HEAD>
+<title>RangeSet.addAll - kotlin-range-sets</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">kotlin-range-sets</a>&nbsp;/&nbsp;<a href="../index.html">com.github.jonpeterson.kotlin.ranges</a>&nbsp;/&nbsp;<a href="index.html">RangeSet</a>&nbsp;/&nbsp;<a href=".">addAll</a><br/>
+<br/>
+<h1>addAll</h1>
+<a name="com.github.jonpeterson.kotlin.ranges.RangeSet$addAll(kotlin.collections.Collection((kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))))"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addAll</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$addAll(kotlin.collections.Collection((kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))))/elements">elements</span><span class="symbol">:</span>&nbsp;<span class="identifier">Collection</span><span class="symbol">&lt;</span><span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code> <a href="https://github.com/jonpeterson/kotlin-range-sets/blob/master/src/main/kotlin/com/github/jonpeterson/kotlin/ranges/RangeSet.kt#L221">(source)</a><br/>
+<p>Adds ranges of values to the set; addition set logic.</p>
+<p>Examples:</p>
+<pre><code>assert(IntRangeSet(listOf(5..21)).apply { addAll(listOf(7..10, 12..15)) }.toList() == listOf(5..21))
+assert(IntRangeSet(listOf(5..8, 11..16)).apply { addAll(listOf(7..10, 14..20)) }.toList() == listOf(5..20))
+assert(IntRangeSet(listOf(11..16)).apply { addAll(listOf(7..10, 18..21)) }.toList() == listOf(7..16, 18..21))</code></pre><br/>
+<br/>
+<h3>Parameters</h3>
+<a name="elements"></a>
+<code>elements</code> - ranges of values to add<br/>
+<p><strong>Return</strong><br/>
+whether any values were added</p>
+<br/>
+<br/>
+</BODY>
+</HTML>

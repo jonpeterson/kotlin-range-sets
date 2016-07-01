@@ -1,0 +1,22 @@
+<HTML>
+<HEAD>
+<title>RangeSet.gaps - kotlin-range-sets</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">kotlin-range-sets</a>&nbsp;/&nbsp;<a href="../index.html">com.github.jonpeterson.kotlin.ranges</a>&nbsp;/&nbsp;<a href="index.html">RangeSet</a>&nbsp;/&nbsp;<a href=".">gaps</a><br/>
+<br/>
+<h1>gaps</h1>
+<a name="com.github.jonpeterson.kotlin.ranges.RangeSet$gaps()"></a>
+<code><span class="keyword">fun </span><span class="identifier">gaps</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">RangeSet</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code> <a href="https://github.com/jonpeterson/kotlin-range-sets/blob/master/src/main/kotlin/com/github/jonpeterson/kotlin/ranges/RangeSet.kt#L466">(source)</a><br/>
+<p>Creates a new <a href="index.html">RangeSet</a> containing missing values between the ranges of this set.</p>
+<p>Examples:</p>
+<pre><code>assert(IntRangeSet(listOf(5..21)).gaps().isEmpty())
+assert(IntRangeSet(listOf(3..7, 12..16, 22..27, 29..32)).gaps() == listOf(8..11, 17..21, 28..28))</code></pre><br/>
+<br/>
+<p><strong>Return</strong><br/>
+new set containing missing values between the ranges of this set</p>
+<br/>
+<br/>
+</BODY>
+</HTML>

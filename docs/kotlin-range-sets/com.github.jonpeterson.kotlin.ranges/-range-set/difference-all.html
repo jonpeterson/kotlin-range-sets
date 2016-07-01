@@ -1,0 +1,23 @@
+<HTML>
+<HEAD>
+<title>RangeSet.differenceAll - kotlin-range-sets</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">kotlin-range-sets</a>&nbsp;/&nbsp;<a href="../index.html">com.github.jonpeterson.kotlin.ranges</a>&nbsp;/&nbsp;<a href="index.html">RangeSet</a>&nbsp;/&nbsp;<a href=".">differenceAll</a><br/>
+<br/>
+<h1>differenceAll</h1>
+<a name="com.github.jonpeterson.kotlin.ranges.RangeSet$differenceAll(kotlin.collections.Collection((kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))))"></a>
+<code><span class="keyword">fun </span><span class="identifier">differenceAll</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$differenceAll(kotlin.collections.Collection((kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))))/elements">elements</span><span class="symbol">:</span>&nbsp;<span class="identifier">Collection</span><span class="symbol">&lt;</span><span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">RangeSet</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code> <a href="https://github.com/jonpeterson/kotlin-range-sets/blob/master/src/main/kotlin/com/github/jonpeterson/kotlin/ranges/RangeSet.kt#L447">(source)</a><br/>
+<p>Creates a new <a href="index.html">RangeSet</a> containing values not present in this set within the specified ranges.</p>
+<p>Examples:</p>
+<pre><code>assert(IntRangeSet(listOf(3..7, 12..16, 22..27, 29..32)).differenceAll(listOf()).isEmpty()
+assert(IntRangeSet(listOf(3..7, 12..16, 22..27, 29..32)).differenceAll(listOf(5..14, 26..30)).toList() == listOf(8..11, 28..28)
+assert(IntRangeSet(listOf(3..7, 12..16, 22..27, 29..32)).differenceAll(listOf(1..35)).toList() == listOf(1..2, 8..11, 17..21, 28..28, 33..35)</code></pre><br/>
+<br/>
+<p><strong>Return</strong><br/>
+new set containing values not present in this set within the specified range</p>
+<br/>
+<br/>
+</BODY>
+</HTML>

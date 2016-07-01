@@ -1,0 +1,25 @@
+<HTML>
+<HEAD>
+<title>RangeSet.removeAll - kotlin-range-sets</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">kotlin-range-sets</a>&nbsp;/&nbsp;<a href="../index.html">com.github.jonpeterson.kotlin.ranges</a>&nbsp;/&nbsp;<a href="index.html">RangeSet</a>&nbsp;/&nbsp;<a href=".">removeAll</a><br/>
+<br/>
+<h1>removeAll</h1>
+<a name="com.github.jonpeterson.kotlin.ranges.RangeSet$removeAll(kotlin.collections.Collection((kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))))"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">removeAll</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$removeAll(kotlin.collections.Collection((kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))))/elements">elements</span><span class="symbol">:</span>&nbsp;<span class="identifier">Collection</span><span class="symbol">&lt;</span><span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code> <a href="https://github.com/jonpeterson/kotlin-range-sets/blob/master/src/main/kotlin/com/github/jonpeterson/kotlin/ranges/RangeSet.kt#L313">(source)</a><br/>
+<p>Removes ranges of values from the set; subtraction set logic.</p>
+<p>Examples:</p>
+<pre><code>assert(IntRangeSet(listOf(5..21)).apply { removeAll(listOf(7..15, 12..17, 20..20)) }.toList() == listOf(5..6, 18..19, 21..21))
+assert(IntRangeSet(listOf(5..9, 13..21)).apply { removeAll(listOf(7..15, 19..23)) }.toList() == listOf(5..6, 16..18))</code></pre><br/>
+<br/>
+<h3>Parameters</h3>
+<a name="elements"></a>
+<code>elements</code> - ranges of values to remove<br/>
+<p><strong>Return</strong><br/>
+whether any values were removed</p>
+<br/>
+<br/>
+</BODY>
+</HTML>

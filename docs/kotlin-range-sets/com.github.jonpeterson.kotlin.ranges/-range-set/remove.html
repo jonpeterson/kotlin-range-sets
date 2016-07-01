@@ -1,0 +1,26 @@
+<HTML>
+<HEAD>
+<title>RangeSet.remove - kotlin-range-sets</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">kotlin-range-sets</a>&nbsp;/&nbsp;<a href="../index.html">com.github.jonpeterson.kotlin.ranges</a>&nbsp;/&nbsp;<a href="index.html">RangeSet</a>&nbsp;/&nbsp;<a href=".">remove</a><br/>
+<br/>
+<h1>remove</h1>
+<a name="com.github.jonpeterson.kotlin.ranges.RangeSet$remove(kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">remove</span><span class="symbol">(</span><span class="identifier" id="com.github.jonpeterson.kotlin.ranges.RangeSet$remove(kotlin.ranges.ClosedRange((com.github.jonpeterson.kotlin.ranges.RangeSet.T)))/element">element</span><span class="symbol">:</span>&nbsp;<span class="identifier">ClosedRange</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code> <a href="https://github.com/jonpeterson/kotlin-range-sets/blob/master/src/main/kotlin/com/github/jonpeterson/kotlin/ranges/RangeSet.kt#L245">(source)</a><br/>
+<p>Removes a range of values from the set; subtraction set logic.</p>
+<p>Examples:</p>
+<pre><code>assert(IntRangeSet(listOf(5..21)).apply { remove(7..15) }.toList() == listOf(5..6, 16..21))
+assert(IntRangeSet(listOf(5..9, 13..21)).apply { remove(7..15) }.toList() == listOf(5..6, 16..21))
+assert(IntRangeSet(listOf(5..9, 13..21)).apply { remove(3..28) }.isEmpty())</code></pre><br/>
+<br/>
+<h3>Parameters</h3>
+<a name="element"></a>
+<code>element</code> - range of values to remove<br/>
+<p><strong>Return</strong><br/>
+whether any values were removed</p>
+<br/>
+<br/>
+</BODY>
+</HTML>
