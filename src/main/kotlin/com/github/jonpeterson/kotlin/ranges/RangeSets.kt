@@ -32,7 +32,7 @@ class IntRangeSet : RangeSet<Int> {
 
     constructor(vararg ranges: IntRange) : this(ranges.asList())
 
-    protected constructor(rangeSet: IntRangeSet) : super(rangeSet)
+    private constructor(rangeSet: IntRangeSet) : super(rangeSet)
 
     override fun createRange(start: Int, endInclusive: Int): IntRange = IntRange(start, endInclusive)
 
@@ -51,7 +51,7 @@ class LongRangeSet : RangeSet<Long> {
 
     constructor(vararg ranges: LongRange) : this(ranges.asList())
 
-    protected constructor(rangeSet: LongRangeSet) : super(rangeSet)
+    private constructor(rangeSet: LongRangeSet) : super(rangeSet)
 
     override fun createRange(start: Long, endInclusive: Long): LongRange = LongRange(start, endInclusive)
 
@@ -70,7 +70,7 @@ class CharRangeSet : RangeSet<Char> {
 
     constructor(vararg ranges: CharRange) : this(ranges.asList())
 
-    protected constructor(rangeSet: CharRangeSet) : super(rangeSet)
+    private constructor(rangeSet: CharRangeSet) : super(rangeSet)
 
     override fun createRange(start: Char, endInclusive: Char): CharRange = CharRange(start, endInclusive)
 
