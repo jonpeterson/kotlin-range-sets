@@ -6,6 +6,7 @@ buildscript {
         gradleVersion = '2.9'
         kotlinVersion = '1.0.2'
         licensePluginVersion = '0.13.1'
+        releasePlugin = '2.4.0'
         spockVersion = '1.0-groovy-2.4'
 
         // external dependencies
@@ -26,6 +27,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokkaPluginVersion}"
         classpath "gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:${licensePluginVersion}"
+        classpath "net.researchgate:gradle-release:${releasePlugin}"
     }
 }
 
@@ -42,6 +44,9 @@ apply plugin: 'kotlin'
 apply plugin: 'groovy'
 apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'com.github.hierynomus.license'
+apply plugin: 'net.researchgate.release'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 sourceCompatibility = 1.6
 
@@ -79,13 +84,73 @@ task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
     outputDirectory = "$buildDir/javadoc"
 }
 
-task sourcesJar(type: Jar) {
+task javadocJar(type: Jar) {
     dependsOn dokkaJavadoc
-    classifier = 'sources'
+    classifier = 'javadoc'
     from "$buildDir/javadoc"
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
 build {
     dependsOn dokka
+    dependsOn javadocJar
     dependsOn sourcesJar
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { deployment -> signing.signPom(deployment) }
+
+            repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Kotlin Range Sets'
+                packaging 'jar'
+                description 'Implementation of set logic on the underlying values of Kotlin\'s Range classes.'
+                url 'https://github.com/jonpeterson/kotlin-range-sets'
+
+                scm {
+                    connection 'scm:git:git://github.com/jonpeterson/kotlin-range-sets.git'
+                    developerConnection 'scm:git:git@github.com:jonpeterson/kotlin-range-sets.git'
+                    url 'https://github.com/jonpeterson/kotlin-range-sets'
+                }
+
+                licenses {
+                    license {
+                        name 'MIT License'
+                        url 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'jonpeterson'
+                        name 'Jonathan Peterson'
+                        email 'jonathan.p.peterson@gmail.com'
+                        url 'https://github.com/jonpeterson'
+                    }
+                }
+            }
+        }
+    }
 }
