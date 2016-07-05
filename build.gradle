@@ -37,7 +37,6 @@ task wrapper(type: Wrapper) {
 }
 
 group = 'com.github.jonpeterson'
-version = '1.0.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'kotlin'
