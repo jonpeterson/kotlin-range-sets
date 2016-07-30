@@ -26,7 +26,7 @@ dependencies {
 
 ## Documentation
 
-[Dokka (via GitHub HTML Preview)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/jonpeterson/kotlin-range-sets/master/docs/kotlin-range-sets/com.github.jonpeterson.kotlin.ranges/index.html)
+[Dokka](https://jonpeterson.github.io/docs/kotlin-range-sets/1.0.0/index.html)
 
 ## Examples
 

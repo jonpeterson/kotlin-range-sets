@@ -3,10 +3,10 @@ buildscript {
         // external dependency versions
         dokkaPluginVersion = '0.9.8'
         groovyVersion = '2.4.5'
-        gradleVersion = '2.9'
+        gradleVersion = '2.14.1'
         kotlinVersion = '1.0.2'
         licensePluginVersion = '0.13.1'
-        releasePlugin = '2.4.0'
+        releasePluginVersion = '2.4.0'
         spockVersion = '1.0-groovy-2.4'
 
         // external dependencies
@@ -27,13 +27,13 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokkaPluginVersion}"
         classpath "gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:${licensePluginVersion}"
-        classpath "net.researchgate:gradle-release:${releasePlugin}"
+        classpath "net.researchgate:gradle-release:${releasePluginVersion}"
     }
 }
 
 
 task wrapper(type: Wrapper) {
-    gradleVersion = gradleVersion
+    gradleVersion = this.gradleVersion
 }
 
 group = 'com.github.jonpeterson'
@@ -48,6 +48,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 sourceCompatibility = 1.6
+targetCompatibility = 1.6
 
 repositories {
     mavenCentral()
@@ -70,7 +71,7 @@ license {
 }
 
 dokka {
-    outputDirectory = 'docs'
+    outputDirectory = "$buildDir/dokka"
     linkMapping {
         dir = 'src/main/kotlin'
         url = 'https://github.com/jonpeterson/kotlin-range-sets/blob/master/src/main/kotlin'
