@@ -37,8 +37,14 @@ import java.util.*
  *
  * @param T the type of ranges in this set
  */
-abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneable {
-    private val ranges = LinkedList<ClosedRange<T>>()
+abstract class RangeSet<T : Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneable {
+    private val ranges = TreeSet<ClosedRange<T>>(Comparator { a, b ->
+        when {
+            (a.endInclusive < b.start) -> -1 // a strictly less than b
+            (b.endInclusive < a.start) -> 1  // a strictly greater than b
+            else -> 0  // the ranges overlap
+        }
+    })
 
     /**
      * Creates a set with no ranges.
@@ -123,6 +129,16 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
     override fun isEmpty(): Boolean = ranges.isEmpty()
 
     /**
+     * @return a view into ranges containing the subset that overlap with the
+     * specified (inclusive) range
+     */
+    private fun overlap(start: T, end: T): SortedSet<ClosedRange<T>> {
+        val startRange = start..start
+        val endRange = end..end
+        return ranges.headSet(endRange, true).tailSet(startRange)
+    }
+
+    /**
      * Adds range of values to the set; addition set logic.
      *
      * Examples:
@@ -136,72 +152,21 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
      * @return whether any values were added
      */
     override fun add(element: ClosedRange<T>): Boolean {
-        var new = element
-        var addIndex = -1
-
-        val iterator = ranges.iterator()
-        while(iterator.hasNext()) {
-            val existing = iterator.next()
-            addIndex++
-
-            // existing:       |---|
-            //      new: |---|
-            //   result: |---| |---|
-            //
-            // add before existing
-            if(new.endInclusive.compareTo(decrementValue(existing.start)) < 0) {
-                ranges.add(addIndex, new)
-                return true
-            }
-
-            // existing:   |--?
-            //      new: |----?
-            if(new.start.compareTo(existing.start) < 0) {
-
-                // existing:   |---|
-                //      new: |---|
-                //   result: |-----|
-                //
-                // redefine new
-                if(new.endInclusive.compareTo(existing.endInclusive) < 0)
-                    new = createRange(new.start, existing.endInclusive)
-
-                // existing:   |---|
-                //      new: |-------|
-                //   result: |-------|
-
-                // remove existing, update position of where to insert new, and continue
-                iterator.remove()
-                addIndex--
-                continue
-            }
-
-            // existing: |-------|
-            //      new:   |---|
-            //   result: |-------|
-            //
-            // range already contained in set, no need to modify anything
-            if(new.endInclusive.compareTo(existing.endInclusive) <= 0)
+        // Expand the range by 1 in each direction when computing the overlap to enable coalescing with adjacent ranges.
+        val subRanges = overlap(decrementValue(element.start), incrementValue(element.endInclusive))
+        if (subRanges.isEmpty()) {
+            ranges.add(element)
+        } else {
+            val firstStart = subRanges.first().start
+            val newStart = firstStart.coerceAtMost(element.start)
+            val lastEnd = subRanges.last().endInclusive
+            val newEnd = lastEnd.coerceAtLeast(element.endInclusive)
+            if (subRanges.size == 1 && newStart == firstStart && newEnd == lastEnd) {
                 return false
-
-            // existing: |---|
-            //      new:   |---|
-            //   result: |-----|
-            //
-            // redefine new, remove existing, and update position of where to insert new
-            if(new.start.compareTo(incrementValue(existing.endInclusive)) <= 0) {
-                new = createRange(existing.start, new.endInclusive)
-                iterator.remove()
-                addIndex--
             }
+            subRanges.clear()
+            ranges.add(createRange(newStart, newEnd))
         }
-
-        // existing: |---|
-        //      new:       |---|
-        //   result: |---| |---|
-        //
-        // add to the end
-        ranges.add(new)
         return true
     }
 
@@ -243,59 +208,18 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
      * @return whether any values were removed
      */
     override fun remove(element: ClosedRange<T>): Boolean {
-        var changed = false
-
-        val iterator = ranges.listIterator()
-        while(iterator.hasNext()) {
-            val existing = iterator.next()
-
-            // existing:       |---|
-            //   remove: |---|
-            //   result:       |---|
-            //
-            // current existing is past the remove; stop iterating
-            if(element.endInclusive.compareTo(existing.start) < 0)
-                break
-
-            // existing: |---|
-            //   remove:       |---|
-            //   result: |---|
-            //
-            // existing not effected; move to next existing
-            if(element.start.compareTo(existing.endInclusive) > 0)
-                continue
-
-            val removeFromStart = element.start.compareTo(existing.start) <= 0
-            val removeFromEnd = element.endInclusive.compareTo(existing.endInclusive) >= 0
-            iterator.remove()
-            changed = true
-
-            // existing: |-----|
-            //   remove:     |---|
-            //   result: |--|
-            //
-            // existing: |---------|
-            //   remove:    |---|
-            //   result: |-|
-            //
-            // not removing start, so add that back
-            if(!removeFromStart)
-                iterator.add(createRange(existing.start, decrementValue(element.start)))
-
-            // existing:   |-----|
-            //   remove: |---|
-            //   result:      |--|
-            //
-            // existing: |---------|
-            //   remove:    |---|
-            //   result:         |-|
-            //
-            // not removing end, so add that back
-            if(!removeFromEnd)
-                iterator.add(createRange(incrementValue(element.endInclusive), existing.endInclusive))
+        val subRange = overlap(element.start, element.endInclusive)
+        if (subRange.isEmpty()) {
+            return false
         }
 
-        return changed
+        val firstStart = subRange.first().start
+        val lastEnd = subRange.last().endInclusive
+        subRange.clear()
+        if (firstStart < element.start) ranges.add(createRange(firstStart, decrementValue(element.start)))
+        if (element.endInclusive < lastEnd) ranges.add(createRange(incrementValue(element.endInclusive), lastEnd))
+
+        return true
     }
 
     /**
@@ -328,64 +252,7 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
      * @return whether any values were removed
      */
     fun retain(element: ClosedRange<T>): Boolean {
-        var changed = false
-
-        val iterator = ranges.listIterator()
-        while(iterator.hasNext()) {
-            val existing = iterator.next()
-
-            val removeFromStart = element.start.compareTo(existing.start) > 0
-            val removeFromEnd = element.endInclusive.compareTo(existing.endInclusive) < 0
-
-            // existing:   |---|
-            //   retain: |-------|
-            //   result:   |---|
-            //
-            // existing not effected; move to next existing
-            if(!removeFromStart && !removeFromEnd)
-                continue
-
-            iterator.remove()
-            changed = true
-
-            // existing:       |---|
-            //   retain: |---|
-            //   result:
-            //
-            // current existing is past the retain; remove the rest
-            if(element.endInclusive.compareTo(existing.start) < 0) {
-                iterator.forEach { iterator.remove() }
-                break
-            }
-
-            // existing: |---|
-            //   retain:       |---|
-            //   result:
-            //
-            // nothing to add back in; continue to next existing
-            if(element.start.compareTo(existing.endInclusive) > 0)
-                continue
-
-            // existing: |-------|
-            //   retain:   |---|
-            //   result:   |---|
-            //
-            // existing: |-----|
-            //   retain:   |-----|
-            //   result:   |---|
-            //
-            // existing:   |-----|
-            //   retain: |-----|
-            //   result:   |---|
-            //
-            // overlap; add a range back in
-            iterator.add(createRange(
-                if(removeFromStart) element.start else existing.start,
-                if(removeFromEnd) element.endInclusive else existing.endInclusive)
-            )
-        }
-
-        return changed
+        return retainAll(empty().apply { add(element) })
     }
 
     /**
@@ -401,20 +268,62 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
      * @return whether any values were removed
      */
     override fun retainAll(elements: Collection<ClosedRange<T>>): Boolean {
-        // TODO: determine if this entire can be more efficiently designed
+        if (ranges.isEmpty()) return false
 
-        val unnormalizedRanges = elements.map { element ->
-            val clone = clone()
-            clone.retain(element)
-            clone.ranges
+        if (elements.isEmpty()) {
+            ranges.clear()
+            return true
         }
 
-        val shallowRangesCopy = LinkedList(ranges)
+        // Both ranges and elements are non-empty by this point.
 
-        clear()
-        unnormalizedRanges.forEach { addAll(it) }
+        // Coalesce and sort incoming ranges.
+        val thoseRanges: RangeSet<T> = if (elements is RangeSet) {
+            elements
+        } else {
+            empty().apply { addAll(elements) }
+        }
+        return retainAll(thoseRanges)
+    }
 
-        return shallowRangesCopy != ranges
+    /**
+     * Removes all values from set except those contained in the specified ranges; intersection set logic.
+     *
+     * Examples:
+     * ```
+     * assert(IntRangeSet(listOf(5..21)).apply { retainAll(listOf(7..10, 12..15)) }.toList() == listOf(7..10, 12..15))
+     * assert(IntRangeSet(listOf(5..9, 13..21)).apply { retainAll(listOf(7..15, 18..25)) }.toList() == listOf(7..9, 13..15, 18..21))
+     * ```
+     *
+     * @param elements ranges of values to keep
+     * @return whether any values were removed
+     */
+    fun retainAll(elements: RangeSet<T>): Boolean {
+        val toAdd = mutableListOf<ClosedRange<T>>()
+        val thisIt = ranges.iterator()
+        val thatIt = elements.iterator()
+        var thatRange: ClosedRange<T>? = thatIt.next()
+        var result = false
+        while (thisIt.hasNext()) {
+            val thisRange = thisIt.next()
+
+            while (thatRange != null && thatRange.endInclusive < thisRange.start)
+                thatRange = if (thatIt.hasNext()) thatIt.next() else null
+
+            if (thatRange == null || thisRange.start < thatRange.start || thisRange.endInclusive > thatRange.endInclusive) {
+                result = true
+                thisIt.remove()
+                while (thatRange != null && thatRange.start <= thisRange.endInclusive) {
+                    toAdd.add(createRange(
+                            thatRange.start.coerceAtLeast(thisRange.start),
+                            thatRange.endInclusive.coerceAtMost(thisRange.endInclusive)))
+                    if (thatRange.endInclusive > thisRange.endInclusive) break
+                    thatRange = if (thatIt.hasNext()) thatIt.next() else null
+                }
+            }
+        }
+        ranges.addAll(toAdd)
+        return result
     }
 
     /**
@@ -482,6 +391,8 @@ abstract class RangeSet<T: Comparable<T>> : MutableSet<ClosedRange<T>>, Cloneabl
     protected abstract fun incrementValue(value: T): T
 
     protected abstract fun decrementValue(value: T): T
+
+    protected abstract fun empty(): RangeSet<T>
 
     override abstract fun clone(): RangeSet<T>
 }
